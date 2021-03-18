@@ -10,9 +10,10 @@ function makePageForEpisodes(episodeList) {
 
   for (let episode of episodeList) {
     let episodeContainer = document.createElement("section");
-    episodeContainer.className = "offset-md-1 col-md-3 ";
+    episodeContainer.className = " col-4";
 
     let title = document.createElement("h4");
+    let seasonEpisodeNumber= document.createElement("h5")
     if (episode.season.length > 1) {
       let seasonNumber = `S${episode.season}`;
     } else {
@@ -24,17 +25,19 @@ function makePageForEpisodes(episodeList) {
       episodeNumber = `E0${episode.number}`;
     }
 
-    title.innerText = `${episode.name} - ${seasonNumber}${episodeNumber}`;
+    title.innerText = `${episode.name}`;
+    seasonEpisodeNumber.innerText = `${seasonNumber}${episodeNumber}`;
 
+    let div = document.createElement("div");
     let image = document.createElement("img");
     image.src = episode.image.medium;
+    div.appendChild(image);
 
-    let episodeSummary = document.createElement("p");
+    let episodeSummary = document.createElement("section");
     episodeSummary.innerHTML = `${episode.summary}`;
-    episodeContainer.append(title, episodeSummary, image);
+    episodeContainer.append(title,seasonEpisodeNumber, image, episodeSummary);
     rootElem.append(episodeContainer);
   }
-  console.log(rootElem)
 }
 
 window.onload = setup;
