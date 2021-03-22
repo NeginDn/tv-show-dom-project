@@ -2,10 +2,23 @@
   color: rgb(0, 0, 0);
   text-align: left;
   padding-top: 100px;
-  background-color: rgb(216, 218, 218);
+  background-color: rgb(255, 255, 255);
 }
 
+h4 {
+  height: 45px;
+  margin-top: 200px;
+  border: 100px;
+}
 
+input{
+  height: 35px;
+  width: 500px;
+  
+}
+.search-input{
+  margin-bottom: 50px;
+}
 img {
   text-align: center;
 }

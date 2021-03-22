@@ -1,19 +1,23 @@
-let rootElem = document.getElementById("root");
+let container = document.getElementById("root");
+// let episodeContainer = "";
 
 function setup() {
+  addSearch();
   const allEpisodes = getAllEpisodes();
   makePageForEpisodes(allEpisodes);
 }
 
 function makePageForEpisodes(episodeList) {
-  // rootElem.textContent = `Got ${episodeList.length} episode(s)`;
+  let rowMainElem = document.createElement("section");
+  rowMainElem.classList.add("row");
 
   for (let episode of episodeList) {
-    let episodeContainer = document.createElement("section");
-    episodeContainer.className = " col-4";
+    let episodeContainer = document.createElement("div");
+    episodeContainer.classList.add("col-4");
 
     let title = document.createElement("h4");
-    let seasonEpisodeNumber= document.createElement("h5")
+    let seasonEpisodeNumber = document.createElement("h5");
+
     if (episode.season.length > 1) {
       let seasonNumber = `S${episode.season}`;
     } else {
@@ -28,16 +32,42 @@ function makePageForEpisodes(episodeList) {
     title.innerText = `${episode.name}`;
     seasonEpisodeNumber.innerText = `${seasonNumber}${episodeNumber}`;
 
-    let div = document.createElement("div");
+    let imageDiv = document.createElement("div");
     let image = document.createElement("img");
     image.src = episode.image.medium;
-    div.appendChild(image);
+    imageDiv.appendChild(image);
 
-    let episodeSummary = document.createElement("section");
+    let episodeSummary = document.createElement("div");
     episodeSummary.innerHTML = `${episode.summary}`;
-    episodeContainer.append(title,seasonEpisodeNumber, image, episodeSummary);
-    rootElem.append(episodeContainer);
+    episodeContainer.append(title, seasonEpisodeNumber, image, episodeSummary);
+    rowMainElem.appendChild(episodeContainer);
   }
+  container.appendChild(rowMainElem);
+}
+
+function addSearch() {
+  let searchInput = document.createElement("input");
+  searchInput.classList.add("search-input");
+  //Doesn't work
+  searchInput.innerText = "Search";
+  container.appendChild(searchInput);
+  let searchResult = document.createElement("div");
+  searchResult.classList.add("search-result");
+
+  searchInput.addEventListener("keyup", (event) => {
+    let searchString = event.target.value.toLowerCase();
+    const allEpisodes = getAllEpisodes();
+    let filteredEpisodes = allEpisodes.filter((episode) => {
+      return (
+        episode.name.toLowerCase().includes(searchString) ||
+        episode.summary.toLowerCase().includes(searchString)
+      );
+    });
+    searchResult.innerHTML = `Displaying ${filteredEpisodes.length}/${allEpisodes.length}`;
+    let rowMainElem = document.querySelector("section");
+    rowMainElem.remove();
+    makePageForEpisodes(filteredEpisodes);
+  });
 }
 
 window.onload = setup;
