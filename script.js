@@ -1,5 +1,8 @@
 let container = document.getElementById("root");
-// let episodeContainer = "";
+let searchContainer = document.getElementById("search-container");
+
+console.log(container);
+console.log(searchContainer);
 
 function setup() {
   addSearch();
@@ -48,9 +51,9 @@ function makePageForEpisodes(episodeList) {
 function addSearch() {
   let searchInput = document.createElement("input");
   searchInput.classList.add("search-input");
-  //Doesn't work
-  searchInput.innerText = "Search";
-  container.appendChild(searchInput);
+  searchInput.placeholder = "Search";
+
+  searchContainer.appendChild(searchInput);
   let searchResult = document.createElement("div");
   searchResult.classList.add("search-result");
 
@@ -64,6 +67,8 @@ function addSearch() {
       );
     });
     searchResult.innerHTML = `Displaying ${filteredEpisodes.length}/${allEpisodes.length}`;
+    searchContainer.appendChild(searchResult);
+
     let rowMainElem = document.querySelector("section");
     rowMainElem.remove();
     makePageForEpisodes(filteredEpisodes);

@@ -11,19 +11,25 @@ h4 {
   border: 100px;
 }
 
-input{
+input {
   height: 35px;
   width: 500px;
-  
 }
-.search-input{
-  margin-bottom: 50px;
+
+.search-input {
+  margin-top: 100px;
+  margin-bottom: 10px;
+}
+.col-4 {
+  text-align: center;
 }
 img {
   text-align: center;
 }
 
 p {
-  text-align: justify;
+  margin-left:50px ;
+  margin-right:45px;
+  text-align:justify;
   width: 250px;
 }
