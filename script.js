@@ -1,25 +1,27 @@
-let container = document.getElementById("root");
-let searchContainer = document.getElementById("search-container");
 let allEpisodes;
+let searchResult = document.createElement("div");
 
 function setup() {
   makePageForEpisodes(allEpisodes);
-  makeDropdownMenu(allEpisodes);
+  makeDropdownForShows();
+  makeDropdownForEpisodes();
   searchForEpisode();
 }
 
-function makePageForEpisodes(episodeList) {
+function makePageForEpisodes(allEpisodes) {
+  let container = document.getElementById("root");
   let rowMainElem = document.createElement("section");
+  rowMainElem.id = "episode-container";
   rowMainElem.classList.add("row");
 
-  for (let episode of episodeList) {
+  for (let episode of allEpisodes) {
     let episodeContainer = document.createElement("div");
     episodeContainer.classList.add("col-4");
 
     let title = document.createElement("h4");
     let seasonEpisodeNumber = document.createElement("h5");
 
-    let imageDiv = document.createElement("div");
+    let imgContainer = document.createElement("div");
     let image = document.createElement("img");
 
     let episodeSummary = document.createElement("div");
@@ -29,7 +31,7 @@ function makePageForEpisodes(episodeList) {
     seasonEpisodeNumber.innerText = makeIdForEpisodes(episode);
 
     image.src = episode.image.medium;
-    imageDiv.appendChild(image);
+    imgContainer.appendChild(image);
 
     episodeSummary.innerHTML = `${episode.summary}`;
     episodeContainer.append(title, seasonEpisodeNumber, image, episodeSummary);
@@ -43,13 +45,13 @@ function searchForEpisode() {
   searchInput.classList.add("search-input");
   searchInput.placeholder = "Search for Episode";
 
+  let searchContainer = document.getElementById("search-container");
   searchContainer.appendChild(searchInput);
-  let searchResult = document.createElement("div");
   searchResult.classList.add("search-result");
 
   searchInput.addEventListener("keyup", (event) => {
     let searchString = event.target.value.toLowerCase();
-    const allEpisodes = getAllEpisodes();
+
     let filteredEpisodes = allEpisodes.filter((episode) => {
       return (
         episode.name.toLowerCase().includes(searchString) ||
@@ -59,22 +61,24 @@ function searchForEpisode() {
     searchResult.innerHTML = `Displaying ${filteredEpisodes.length}/${allEpisodes.length}`;
     searchContainer.appendChild(searchResult);
 
-    let rowMainElem = document.querySelector("section");
-    rowMainElem.remove();
+    clearPageContent();
     makePageForEpisodes(filteredEpisodes);
   });
 }
 
-function makeDropdownMenu() {
-  let episodeList = getAllEpisodes();
+function makeDropdownForEpisodes() {
   let select = document.createElement("select");
-  select.id = "selectEpisode";
-  let defaultOption = document.createElement("option");
-  defaultOption.innerHTML = "Choose Episode";
-  select.appendChild(defaultOption);
-  select.innerHTML = "";
+  select.id = "select-episode-element";
 
-  for (let episode of episodeList) {
+  let defaultOption = document.createElement("option");
+  defaultOption.innerHTML = "All Episodes";
+  defaultOption.value = 1;
+  select.appendChild(defaultOption);
+
+  // if (event.currentTarget.value === 1) {
+  //   makePageForEpisodes(allEpisodes);
+  // }
+  for (let episode of allEpisodes) {
     let option = document.createElement("option");
     let seasonEpisodeNumber = makeIdForEpisodes(episode);
 
@@ -82,32 +86,64 @@ function makeDropdownMenu() {
     option.value = episode.id;
     select.appendChild(option);
   }
+  let searchContainer = document.getElementById("search-container");
   searchContainer.appendChild(select);
 
-  let searchResult = document.createElement("div");
   searchResult.classList.add("search-result");
 
   select.addEventListener("change", (event) => {
-    let filteredEpisodes = episodeList.filter((episode) => {
+ 
+    let filteredEpisodes = allEpisodes.filter((episode) => {
       return episode.id == event.currentTarget.value;
     });
-    searchResult.innerHTML = `Displaying ${filteredEpisodes.length}/${episodeList.length}`;
+    if (event.currentTarget.value == 1) {
+      filteredEpisodes = allEpisodes;
+    }
+    searchResult.innerHTML = `Displaying ${filteredEpisodes.length}/${allEpisodes.length}`;
     searchContainer.appendChild(searchResult);
 
-    let rowMainElem = document.querySelector("section");
-    rowMainElem.remove();
+    clearPageContent();
     makePageForEpisodes(filteredEpisodes);
   });
 }
 
-function fetchUrl() {
+function makeDropdownForShows() {
+  const allShows = getAllShows();
+  sortShowsByName(allShows);
+
+  let select = document.createElement("select");
+
+  let defaultOption = document.createElement("option");
+  defaultOption.innerHTML = "Choose Shows";
+  select.appendChild(defaultOption);
+  let option;
+  for (let show of allShows) {
+    option = document.createElement("option");
+
+    option.innerHTML = `${show.name}`;
+    option.value = show.id;
+    console.log(option.value);
+    select.appendChild(option);
+  }
+  let searchContainer = document.getElementById("search-container");
+  searchContainer.appendChild(select);
+  searchResult.classList.add("search-result");
+
+  select.addEventListener("change", (event) => {
+    clearPageContent();
+    document.getElementById("select-episode-element").remove();
+    fetchUrl(event.currentTarget.value);
+  });
+}
+
+function fetchUrlForStart() {
   const urlAddress = "https://api.tvmaze.com/shows/82/episodes";
   fetch(urlAddress)
-    .then((Response) => {
-      if (!Response.ok) {
-        throw Response.statusText;
+    .then((response) => {
+      if (!response.ok) {
+        throw response.statusText;
       }
-      return Response.json();
+      return response.json();
     })
     .then((episodeList) => {
       allEpisodes = episodeList;
@@ -118,6 +154,36 @@ function fetchUrl() {
     });
 }
 
+function sortShowsByName(allShows) {
+  return allShows.sort((firstShow, secondShow) =>
+    firstShow.name > secondShow.name ? 1 : -1
+  );
+}
+
+function fetchUrl(showId) {
+  const urlAddress = `https://api.tvmaze.com/shows/${showId}/episodes`;
+  fetch(urlAddress)
+    .then((response) => {
+      if (!response.ok) {
+        throw response.statusText;
+      }
+      return response.json();
+    })
+    .then((episodeList) => {
+      allEpisodes = episodeList;
+      makeDropdownForEpisodes();
+      makePageForEpisodes(allEpisodes);
+    })
+    .catch((error) => {
+      console.log("Error:", error);
+    });
+}
+
+function sortShowsByName(allShows) {
+  return allShows.sort((firstShow, secondShow) =>
+    firstShow.name > secondShow.name ? 1 : -1
+  );
+}
 function makeIdForEpisodes(episode) {
   let seasonNumber;
   let episodeNumber;
@@ -135,4 +201,9 @@ function makeIdForEpisodes(episode) {
   return seasonEpisodeNumber;
 }
 
-window.onload = fetchUrl;
+function clearPageContent() {
+  let pageContent = document.getElementById("episode-container");
+  pageContent.remove();
+}
+
+window.onload = fetchUrlForStart;
