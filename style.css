@@ -1,8 +1,8 @@
 #root {
+  font-family: Noto Sans JP;
   color: rgb(0, 0, 0);
   text-align: left;
-  padding-top: 100px;
-  background-color: rgb(255, 255, 255);
+  background-color: #e9b562;
 }
 
 h4 {
@@ -20,17 +20,37 @@ input {
   margin-top: 100px;
   margin-bottom: 10px;
 }
-.col-4 {
+/* .col-4 {
   text-align: center;
-}
+} */
 
 img {
   text-align: center;
 }
 
 p {
-  margin-left:50px ;
-  margin-right:45px;
-  text-align:justify;
-  width: 250px;
+  text-align: justify;
 }
+
+.each-show {
+  margin: 5px;
+  padding: 30px;
+}
+
+.info-box,
+.title {
+  font-weight: bolder;
+  color: #e9b562;
+}
+
+.info-box {
+  text-align: center;
+}
+
+.each-episode  img {
+  text-align: center;
+}
+
+/* .each-episode  {
+  text-align: center;
+} */
