@@ -1,3 +1,52 @@
 #root {
-  color: red;
+  font-family: Noto Sans JP;
+  color: rgb(0, 0, 0);
+  text-align: left;
+  background-color: #e9b562;
+}
+
+h4 {
+  height: 45px;
+  margin-top: 200px;
+  border: 100px;
+}
+
+input {
+  height: 35px;
+  width: 500px;
+}
+
+/* .search-input {
+  margin-top: 100px;
+  margin-bottom: 10px;
+} */
+/* .col-4 {
+  text-align: center;
+} */
+
+img {
+  text-align: center;
+}
+
+p {
+  text-align: justify;
+}
+
+.each-show {
+  margin: 5px;
+  padding: 30px;
+}
+
+.info-box,
+.title {
+  font-weight: bolder;
+  color: #e9b562;
+}
+
+.info-box {
+  text-align: center;
+}
+
+.each-episode  img {
+  text-align: center;
 }
