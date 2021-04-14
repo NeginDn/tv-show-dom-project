@@ -80,10 +80,23 @@ function makeSearchForShows() {
 
   let searchInput = document.createElement("input");
   searchInput.id = "show-searchbar";
-  searchInput.classList.add("search-input");
+  searchInput.classList.add("search-input", "form-control");
   searchInput.placeholder = "Search for your favorite show here";
 
-  container.appendChild(searchInput);
+  let searchBarContainer = document.createElement("section");
+  searchBarContainer.id = "searchbar-container";
+  searchBarContainer.classList.add("col-4", "my-2");
+  searchBarContainer.appendChild(searchInput);
+
+  let label = document.createElement("h6");
+  label.id = "label-show";
+  label.classList.add("col-2", "my-2", "mt-3");
+  label.textContent = "Search here:";
+
+  let searchContainer = document.getElementById("search-container");
+  searchContainer.append(label, searchBarContainer);
+
+  container.appendChild(searchContainer);
   searchResult.classList.add("search-result");
 
   searchInput.addEventListener("keyup", (event) => {
@@ -110,6 +123,8 @@ function makeDropdownForShows() {
   sortShowsByName(allShows);
 
   let select = document.createElement("select");
+  select.textContent = "Test";
+  select.classList.add("form-control");
 
   let defaultOption = document.createElement("option");
   defaultOption.innerHTML = "All Shows";
@@ -124,15 +139,19 @@ function makeDropdownForShows() {
     select.appendChild(option);
   }
   let dropMenuContainer = document.createElement("section");
+  dropMenuContainer.classList.add("col-4", "my-2");
   dropMenuContainer.appendChild(select);
 
   let searchContainer = document.createElement("section");
-  // searchContainer.classList.add("search-container");
+  searchContainer.classList.add("row");
   searchContainer.id = "search-container";
-  searchContainer.appendChild(dropMenuContainer);
 
+  let label = document.createElement("h6");
+  label.classList.add("col-2", "my-2", "mt-3");
+  label.textContent = "Choose show:";
+
+  searchContainer.append(label, dropMenuContainer);
   container.appendChild(searchContainer);
- 
 
   select.addEventListener("change", (event) => {
     if (event.currentTarget.value == 0) {
@@ -141,11 +160,12 @@ function makeDropdownForShows() {
       makeSearchForShows();
       const allShows = getAllShows();
       makePageForShows(allShows);
+      searchResult.innerHTML = `Displaying ${allShows.length}/${allShows.length}`;
     } else {
-      showSearchBarExist = document.getElementById("show-searchbar");
+      showSearchBarExist = document.getElementById("searchbar-container");
       if (showSearchBarExist) {
-        document.getElementById("show-searchbar").remove();
-        makeSearchForEpisodes();
+        document.getElementById("searchbar-container").remove();
+        document.getElementById("label-show").remove();
       }
     }
 
@@ -209,6 +229,9 @@ function makePageForEpisodes(allEpisodes) {
     rowElem.appendChild(eachEpisodeContainer);
     episodesContainer.appendChild(rowElem);
   }
+  searchResult.innerHTML = `Displaying ${allEpisodes.length}/${allEpisodes.length}`;
+
+  container.appendChild(searchResult);
   container.appendChild(episodesContainer);
 }
 
@@ -218,17 +241,21 @@ function sortShowsByName(allShows) {
   );
 }
 
-
 function makeSearchForEpisodes() {
   let container = document.getElementById("root");
 
   let searchInput = document.createElement("input");
   searchInput.id = "episode-searchbar";
-  searchInput.classList.add("search-input");
+  searchInput.classList.add("search-input", "form-control");
   searchInput.placeholder = "Search for your favorite episode here ";
 
-  container.appendChild(searchInput);
-  searchResult.classList.add("search-result");
+  let searchBarContainer = document.createElement("section");
+  searchBarContainer.classList.add("offset-2", "col-8");
+  searchBarContainer.appendChild(searchInput);
+
+  let searchContainer = document.getElementById("search-container");
+  searchContainer.appendChild(searchBarContainer);
+  container.appendChild(searchContainer);
 
   searchInput.addEventListener("keyup", (event) => {
     let searchString = event.target.value.toLowerCase();
@@ -253,13 +280,13 @@ function makeDropdownForEpisodes() {
   let dropDownExist = document.getElementById("select-episode-element");
   if (dropDownExist) {
     document.getElementById("select-episode-element").remove();
-
-    console.log("found it");
   }
+
   let container = document.getElementById("root");
 
   let select = document.createElement("select");
   select.id = "select-episode-element";
+  select.classList.add("form-control");
 
   let defaultOption = document.createElement("option");
   defaultOption.innerHTML = "All Episodes";
@@ -274,9 +301,13 @@ function makeDropdownForEpisodes() {
     option.value = episode.id;
     select.appendChild(option);
   }
+  let dropMenuContainer = document.createElement("section");
+  dropMenuContainer.classList.add("col-4", "my-2");
+  dropMenuContainer.appendChild(select);
+
   let searchContainer = document.getElementById("search-container");
   searchContainer.classList.add("search-container");
-  searchContainer.appendChild(select);
+  searchContainer.appendChild(dropMenuContainer);
 
   searchResult.classList.add("search-result");
 
@@ -311,11 +342,29 @@ function fetchUrl(showId) {
     .then((episodeList) => {
       allEpisodes = episodeList;
       makeDropdownForEpisodes();
+      makeSearchForEpisodes();
       makePageForEpisodes(allEpisodes);
     })
     .catch((error) => {
       console.log("Error:", error);
     });
+}
+
+function makeIdForEpisodes(episode) {
+  let seasonNumber;
+  let episodeNumber;
+  if (episode.season.length > 1) {
+    seasonNumber = `S${episode.season}`;
+  } else {
+    seasonNumber = `S0${episode.season}`;
+  }
+  if (episode.number.length > 1) {
+    episodeNumber = `E${episode.number}`;
+  } else {
+    episodeNumber = `E0${episode.number}`;
+  }
+  let seasonEpisodeNumber = `${seasonNumber}${episodeNumber}`;
+  return seasonEpisodeNumber;
 }
 
 window.onload = setup;
